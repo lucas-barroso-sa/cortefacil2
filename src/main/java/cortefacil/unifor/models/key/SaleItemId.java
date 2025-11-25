@@ -1,47 +1,55 @@
 package cortefacil.unifor.models.key;
 
 import jakarta.persistence.Embeddable;
-
+import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class SaleItemId {
-    private Long SaleID;
-    private Long ItemID;
+public class SaleItemId implements Serializable {
+
+    // Nomes corrigidos para camelCase: 'saleId' e 'itemId'
+    private Long saleId;
+    private Long itemId;
 
 
     public SaleItemId() {
     }
-    public SaleItemId(Long SaleID, Long ItemID) {
-        this.SaleID = SaleID;
-        this.ItemID = ItemID;
+
+    // Nomes dos parâmetros corrigidos
+    public SaleItemId(Long saleId, Long itemId) {
+        this.saleId = saleId;
+        this.itemId = itemId;
     }
 
-    public Long getSaleID() {
-        return SaleID;
+    public Long getSaleId() {
+        return saleId;
     }
 
-    public void setSaleID(Long saleID) {
-        SaleID = saleID;
+    public void setSaleId(Long saleId) {
+        // Correção de Bug: Atribuição correta
+        this.saleId = saleId;
     }
 
-    public Long getItemID() {
-        return ItemID;
+    public Long getItemId() {
+        // Getter com nome corrigido para 'getItemId'
+        return itemId;
     }
 
-    public void setItemID(Long itemID) {
-        ItemID = itemID;
+    public void setItemId(Long itemId) {
+        // Correção de Bug: Atribuição correta
+        this.itemId = itemId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         SaleItemId that = (SaleItemId) o;
-        return Objects.equals(SaleID, that.SaleID) && Objects.equals(ItemID, that.ItemID);
+        // Uso dos campos corrigidos
+        return Objects.equals(saleId, that.saleId) && Objects.equals(itemId, that.itemId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(SaleID, ItemID);
+        return Objects.hash(saleId, itemId);
     }
 }

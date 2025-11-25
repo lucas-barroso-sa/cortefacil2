@@ -1,32 +1,28 @@
-package cortefacil.unifor.models.entities;
+package cortefacil.unifor.models.DTOs;
 
+import cortefacil.unifor.models.entities.Item;
 import cortefacil.unifor.models.enuns.ItemType;
-import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
-import java.util.Objects;
+public class ItemDTO {
 
-@Entity
-@Table(name = "tb_item")
-public class Item {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
     private String name;
     private String description;
     private double price;
     private int quantity;
-    @NotNull
     private int minimalQuantity;
-    @NotNull
     private ItemType type;
 
-    public Item() {
+    public ItemDTO(Item entity) {
+        this.id = entity.getId();
+        this.name = entity.getName();
+        this.description = entity.getDescription();
+        this.price = entity.getPrice();
+        this.quantity = entity.getQuantity();
+        this.minimalQuantity = entity.getMinimalQuantity();
+        this.type = entity.getType();
+
     }
-
-
-
 
     public Long getId() {
         return id;
@@ -82,17 +78,5 @@ public class Item {
 
     public void setType(ItemType type) {
         this.type = type;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Item item = (Item) o;
-        return id == item.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
     }
 }
