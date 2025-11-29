@@ -23,6 +23,7 @@ public class ItemDTO {
         this.type = entity.getType();
 
     }
+    public ItemDTO() {}
 
     public Long getId() {
         return id;
