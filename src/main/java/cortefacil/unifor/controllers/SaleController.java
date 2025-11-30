@@ -35,5 +35,9 @@ public class SaleController {
         return ResponseEntity.created(uri).body(dto);
     }
 
+    @GetMapping(value = "/{id}")
+    public SaleDTO findById(@PathVariable Long id) {
+        return saleService.findById(id);
+    }
 
 }
