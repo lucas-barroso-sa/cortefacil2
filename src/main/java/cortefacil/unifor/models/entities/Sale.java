@@ -2,7 +2,8 @@ package cortefacil.unifor.models.entities;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -10,17 +11,22 @@ public class Sale {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
-    private LocalDate date;
+    private LocalDateTime date;
     private double totalValue;
 
     @OneToMany(cascade=CascadeType.ALL)
     private List<ItemSale> itemSaleList;
 
     public Sale() {
+        this.date = LocalDateTime.now();
+        this.itemSaleList = new ArrayList<>();
     }
-    public Sale(LocalDate date, double totalValue) {
+    public Sale(LocalDateTime date) {
         this.date = date;
-        this.totalValue = totalValue;
+    }
+    public void calculateTotal() {
+        this.totalValue = itemSaleList.stream().mapToDouble(ItemSale::getSubtotal).sum();
+
     }
 
 
@@ -32,11 +38,11 @@ public class Sale {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

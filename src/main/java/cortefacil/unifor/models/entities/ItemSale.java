@@ -7,6 +7,7 @@ import java.util.Objects;
 
 @Entity
 public class ItemSale {
+    private String itemName;
     private int quantity;
     private double price; // Preço unitário no momento da venda
     private double subtotal;
@@ -29,25 +30,75 @@ public class ItemSale {
     public ItemSale(){
     }
 
-    // CONSTRUTOR CORRIGIDO: Removido o parâmetro 'subtotal' redundante e adicionada a lógica JPA
-    public ItemSale(int quantity, double price, Sale sale, Item item) {
+    public ItemSale(int quantity, Sale sale, Item item) {
 
-        // 1. ✅ INICIALIZAÇÃO DA CHAVE COMPOSTA (@EmbeddedId)
-        // Isso é obrigatório! Garante que o objeto 'id' não é nulo.
+        // INICIALIZAÇÃO DA CHAVE COMPOSTA (@EmbeddedId)
         this.id = new SaleItemId(sale.getId(), item.getId());
 
-        // 2. ✅ ATRIBUIÇÃO DAS ENTIDADES
+
         // O Hibernate usa estas referências para popular o @MapsId
         this.sale = sale;
         this.item = item;
 
-        // 3. Atribuição dos atributos da linha de venda
+        this.itemName = item.getName();
         this.quantity = quantity;
-        this.price = price;
-        this.subtotal = (double) quantity * price;
+        this.price = item.getPrice();
+        this.subtotal = quantity * item.getPrice();
     }
 
-    // ... restante dos Getters e Setters (Mantidos como estavam)
+    public String getItemName() {
+        return itemName;
+    }
 
-    // ...
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public SaleItemId getId() {
+        return id;
+    }
+
+    public void setId(SaleItemId id) {
+        this.id = id;
+    }
+
+    public Sale getSale() {
+        return sale;
+    }
+
+    public void setSale(Sale sale) {
+        this.sale = sale;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
 }

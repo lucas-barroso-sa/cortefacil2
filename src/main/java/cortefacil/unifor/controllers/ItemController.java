@@ -32,6 +32,7 @@ public class ItemController {
     }
 
 
+    //ajustar formato de input
     @PutMapping(value = "/{id}")
     public ItemDTO updateByID(@PathVariable Long id,@RequestBody ItemDTO dto) {
         return itemService.updateByID(dto, id);

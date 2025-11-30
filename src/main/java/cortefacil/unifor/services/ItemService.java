@@ -23,6 +23,10 @@ public class ItemService {
         this.itemRepository = itemRepository;
     }
 
+    public Item findEntityById(Long id) {
+        return itemRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Item not found"));
+    }
+
     @Transactional
     public List<ItemDTO> findAll() {
         try {
@@ -93,6 +97,10 @@ public class ItemService {
         if(dto.getType()!=null) {
             entity.setType(dto.getType());
         }
+    }
+
+    public void updateStockQuantity(Item item){
+        itemRepository.save(item);
     }
 
     @Transactional
