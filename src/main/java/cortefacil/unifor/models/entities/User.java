@@ -3,13 +3,17 @@ package cortefacil.unifor.models.entities;
 import cortefacil.unifor.models.enuns.UserType;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tb_user")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,6 +42,31 @@ public class User {
 
     public User() {}
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Define as permissões baseadas no seu Enum UserType
+        if (this.type == UserType.ADMIN) {
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+    }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
+
+
+
     public Long getId() {
         return id;
     }
@@ -45,7 +74,7 @@ public class User {
     public void setId(Long id) {
         this.id = id;
     }
-
+    @Override
     public String getUsername() {
         return username;
     }
@@ -98,11 +127,11 @@ public class User {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(password, user.password);
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, password);
+        return Objects.hash(id, username);
     }
 }
