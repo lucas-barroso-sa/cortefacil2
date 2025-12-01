@@ -10,6 +10,7 @@ import cortefacil.unifor.repositories.AppointmentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -88,6 +89,11 @@ public class AppointmentService {
 
         // 8. Retorna o DTO
         return new AppointmentDTO(appointment);
+    }
+
+    @Transactional // Otimização para leitura
+    public List<Appointment> findByDateRange(LocalDateTime start, LocalDateTime end) {
+        return appointmentRepository.findByDateRange(start, end);
     }
 
 }
