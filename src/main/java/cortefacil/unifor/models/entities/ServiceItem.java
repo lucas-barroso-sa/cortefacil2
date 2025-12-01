@@ -1,55 +1,58 @@
 package cortefacil.unifor.models.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import org.antlr.v4.runtime.misc.NotNull;
-
+import cortefacil.unifor.models.key.ServiceItemId;
+import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Table(name = "tb_service_item")
 public class ServiceItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    @NotNull
-    private double price;
+
+    @EmbeddedId
+    private ServiceItemId id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("appointmentId")
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("serviceId")
+    @JoinColumn(name = "service_id")
+    private Services services;
+
+    private Double price; // Preço congelado do serviço
 
     public ServiceItem() {}
 
-    public ServiceItem(String name, double price) {
-        this.name = name;
-        this.price = price;
+    public ServiceItem(Appointment appointment, Services services) {
+        // Inicializa a chave composta
+        this.id = new ServiceItemId(appointment.getId(), services.getId());
+
+        this.appointment = appointment;
+        this.services = services;
+
+        // Congela o preço atual do serviço do banco
+        this.price = services.getPrice();
     }
 
-    public Long getId() {
-        return id;
-    }
+    // Getters e Setters
+    public ServiceItemId getId() { return id; }
+    public void setId(ServiceItemId id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Appointment getAppointment() { return appointment; }
+    public void setAppointment(Appointment appointment) { this.appointment = appointment; }
 
-    public String getName() {
-        return name;
-    }
+    public Services getService() { return services; }
+    public void setService(Services services) { this.services = services; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
+    // Equals e HashCode (Obrigatórios para Set<>)
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ServiceItem that = (ServiceItem) o;
         return Objects.equals(id, that.id);
@@ -57,6 +60,6 @@ public class ServiceItem {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id);
     }
 }
