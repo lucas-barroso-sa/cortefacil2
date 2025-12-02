@@ -4,6 +4,8 @@ import cortefacil.unifor.models.enuns.ItemType;
 import jakarta.persistence.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +23,11 @@ public class Item {
     private int minimalQuantity;
     @NotNull
     private ItemType type;
+    @Column(nullable = false)
+    private Boolean active = true;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ItemSale> sales = new ArrayList<>();
 
     public Item() {
     }
@@ -79,6 +86,11 @@ public class Item {
     public ItemType getType() {
         return type;
     }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
 
     public void setType(ItemType type) {
         this.type = type;

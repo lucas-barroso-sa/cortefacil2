@@ -1,9 +1,11 @@
 package cortefacil.unifor.controllers;
 
 import cortefacil.unifor.models.DTOs.ItemDTO;
+import cortefacil.unifor.models.DTOs.StockUpdateDTO;
 import cortefacil.unifor.services.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,4 +46,20 @@ public class ItemController {
         itemService.deleteById(id);
     }
 
+    @PatchMapping(value = "/{id}/add-stock")
+    public ResponseEntity<Void> addStock(@PathVariable Long id, @RequestBody StockUpdateDTO dto) {
+        itemService.addStock(id, dto.getQuantity());
+        return ResponseEntity.noContent().build();
+    }
+
+    // 2. Baixar Estoque (Uso interno / Perda / Ajuste)
+    // URL: PATCH /items/{id}/decrease-stock
+    @PatchMapping(value = "/{id}/decrease-stock")
+    public ResponseEntity<Void> decreaseStock(@PathVariable Long id, @RequestBody StockUpdateDTO dto) {
+        itemService.decreaseStock(id, dto.getQuantity());
+        return ResponseEntity.noContent().build();
+    }
 }
+
+
+

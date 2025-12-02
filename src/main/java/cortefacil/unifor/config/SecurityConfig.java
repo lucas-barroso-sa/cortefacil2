@@ -1,8 +1,5 @@
 package cortefacil.unifor.config;
 
-import cortefacil.unifor.config.SecurityFilter;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,32 +22,58 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    SecurityFilter securityFilter;
+    private final SecurityFilter securityFilter;
+
+    // Melhor prática: Injeção via construtor garante que o filtro não seja nulo
+    public SecurityConfig(SecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                // --- 1. ATIVA O CORS AQUI ---
+                // 1. Configuração de CORS (Permite o Front-end acessar)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // 2. Desabilita CSRF (Padrão para APIs REST)
+                // 2. Desabilita CSRF (Obrigatório para POST/PUT/DELETE funcionarem sem sessão)
                 .csrf(csrf -> csrf.disable())
 
-                // 3. Define que é Stateless (Sem sessão no servidor)
+                // 3. Define a aplicação como Stateless (Sem sessão no servidor)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // 4. Configura as permissões de rotas
                 .authorizeHttpRequests(authorize -> authorize
+                        // Rotas Públicas (Login e Registro)
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        // Adicione outras rotas públicas aqui se precisar (ex: /h2-console/**)
+
+                        // Rotas Protegidas (Todo o resto exige Token)
                         .anyRequest().authenticated()
                 )
 
-                // 5. Adiciona o filtro de Token
+                // 5. Adiciona o nosso filtro de Token antes do filtro padrão
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // Origens permitidas (Front-end)
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
+
+        // Métodos permitidos (Incluindo DELETE para funcionar a exclusão)
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Headers permitidos (Incluindo Authorization)
+        configuration.setAllowedHeaders(List.of("*"));
+
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
@@ -62,24 +85,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    // Em SecurityConfig.java
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        // ATENÇÃO AQUI: Adicione a porta 5174 que apareceu no seu erro
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
-
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*")); // Permite todos os headers (incluindo Authorization)
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
-
 }

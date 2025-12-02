@@ -32,7 +32,6 @@ public class ItemSale {
 
     public ItemSale(int quantity, Sale sale, Item item) {
 
-        // INICIALIZAÇÃO DA CHAVE COMPOSTA (@EmbeddedId)
         this.id = new SaleItemId(sale.getId(), item.getId());
 
 

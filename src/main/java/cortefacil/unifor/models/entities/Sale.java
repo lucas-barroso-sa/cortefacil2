@@ -13,8 +13,7 @@ public class Sale {
     private long id;
     private LocalDateTime date;
     private double totalValue;
-
-    @OneToMany(cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemSale> itemSaleList;
 
     public Sale() {

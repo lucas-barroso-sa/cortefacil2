@@ -4,6 +4,7 @@ import cortefacil.unifor.models.enuns.MovementType;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -13,7 +14,7 @@ public class InventoryMovement {
     private Long id;
     private MovementType type;
     private int quantity;
-    private LocalDate dateTime;
+    private LocalDateTime dateTime;
 
     @ManyToOne
     @JoinColumn(name = "item_id", nullable = false)
@@ -45,11 +46,11 @@ public class InventoryMovement {
         this.quantity = quantity;
     }
 
-    public LocalDate getDateTime() {
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDate dateTime) {
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
 
